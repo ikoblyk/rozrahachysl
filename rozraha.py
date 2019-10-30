@@ -8,6 +8,7 @@ import math
 from pandas.plotting import register_matplotlib_converters
 from  scipy.stats import t, sem
 from scipy.signal import medfilt
+from sklearn.metrics import r2_score
 
 
 register_matplotlib_converters()
@@ -126,6 +127,7 @@ stdev = hlp['mean'].std()
 print(stdev)
 stderr = stdev/math.sqrt(hlp.__len__())
 print("{}/{}/{}".format(stdev, stderr, hlp["mean"].var()))
+
 
 
 
@@ -282,6 +284,13 @@ turning_pointexp25aft = turning_points(hlp["exp0.25"],  n)
 turning_pointexp3aft = turning_points(hlp["exp0.3"],  n)
 
 
+print("exp {}\t{}\t{}\t{}\t{}".format(turning_pointexp1, turning_pointsexp15,turning_pointexp2_,turning_pointexp25,turning_pointexp3,))
+print("exp 2{}\t{}\t{}\t{}\t{}".format(turning_pointexp1aft, turning_pointexp15aft,turning_pointexp2aft,turning_pointexp25aft,turning_pointexp3aft))
+
+
+
+
+
 
 
 
@@ -348,8 +357,12 @@ sigma = 25
 n_bins = 971
 
 
+print(hlp.corr(method="pearson"))
+print(hlp.autocorr())
 
-print(hlp["mean"].corr(x))
+
+
+
 
 
 
