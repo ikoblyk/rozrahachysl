@@ -9,6 +9,11 @@ from pandas.plotting import register_matplotlib_converters
 from  scipy.stats import t, sem
 from scipy.signal import medfilt
 from sklearn.metrics import r2_score
+from sklearn.cluster import KMeans
+from scipy.spatial.distance import squareform
+from scipy.spatial.distance import pdist
+from scipy.cluster import hierarchy
+from pprint import  pprint
 
 
 register_matplotlib_converters()
@@ -36,8 +41,16 @@ def converter_to_datetime(seconds):
     d = DT.strptime(st, '%H:%M:%S').time()
     return d
 
-data = pd.read_excel(r'/home/ivan/Documents/chyselni_rozraha/V6.xls')
+
+
+
+data = pd.read_excel(r'/home/ivan/Documents/V6.xls')
 print(data)
+
+data.dropna(inplace=True)
+data.drop_duplicates(inplace=True)
+
+
 
 #fst = data.loc[:54]
 #r =54
@@ -87,6 +100,8 @@ def sc_creator():
     return scs
 
 
+
+
 def turning_points(frame, size):
     turning_points = 0
     for i in range( 1, size-2):
@@ -95,38 +110,43 @@ def turning_points(frame, size):
     return turning_points
 
 
-
-
-
-
-
-
-
-
 hlp = pd.DataFrame(columns = ['mean', 'median'])
 hlp['mean'] = sc_creator()
 sum = T.strftime('%H:%M:%S', T.gmtime(hlp['mean'].sum()))
+print("sum")
 print(sum)
 mean = T.strftime('%H:%M:%S', T.gmtime(hlp['mean'].mean()))
+print("mean")
 print(mean)
 max = T.strftime('%H:%M:%S', T.gmtime(hlp['mean'].max()))
+print("max")
 print(max)
 min = T.strftime('%H:%M:%S', T.gmtime(hlp['mean'].min()))
+print("min")
 print(min)
 median = T.strftime('%H:%M:%S', T.gmtime(hlp['mean'].median()))
+print("meadian")
 print(median)
 mode = T.strftime('%H:%M:%S', T.gmtime(hlp['mean'].mode()))
+print("mode")
 print(mode)
 count = T.strftime('%H:%M:%S', T.gmtime(hlp['mean'].count()))
+print("count")
 print(count)
 skrew = hlp['mean'].skew()
+print("skrew")
 print(skrew)
 kurt = hlp['mean'].kurt()
+print("kurt")
 print(kurt)
 stdev = hlp['mean'].std()
+print("standart deviation")
 print(stdev)
 stderr = stdev/math.sqrt(hlp.__len__())
-print("{}/{}/{}".format(stdev, stderr, hlp["mean"].var()))
+print("standart error")
+print(stderr)
+print("sample variance")
+print("{}".format(hlp["mean"].var()))
 
 
 
@@ -151,7 +171,7 @@ hlp["rolling_av13"] = hlp["mean"].rolling(13, min_periods=1).mean()
 hlp["rolling_av15"] = hlp["mean"].rolling(15, min_periods=1).mean()
 
 
-fig, ax = plt.subplots(figsize=(8, 4))
+#fig, ax = plt.subplots(figsize=(8, 4))
 
 hlp["ra5from3"] = hlp["rolling_av3"].rolling(5, min_periods=1).mean()
 #ax.plot(hlp["ra5from3"])
@@ -177,10 +197,10 @@ corr5_1 = hlp["mean"].corr(hlp["rolling_av11"])
 corr6_1 = hlp["mean"].corr(hlp["rolling_av13"])
 corr7_1 = hlp["mean"].corr(hlp["rolling_av15"])
 
-print("correlation {} {} {} {} {} {} {}".format(corr1, corr2, corr3, corr4, corr5, corr6, corr7))
+print("correlation \n{} \n{} \n{} \n{} \n{}\n {}\n {}".format(corr1, corr2, corr3, corr4, corr5, corr6, corr7))
 
 
-print("correlation 1_1 {} {} {} {} {} {} {}".format(corr1_1, corr2_1, corr3_1, corr4_1, corr5_1, corr6_1, corr7_1))
+print("correlation послідовне {}\n {}\n {}\n {}\n {} \n{} \n{}".format(corr1_1, corr2_1, corr3_1, corr4_1, corr5_1, corr6_1, corr7_1))
 
 n = hlp["rolling_av3"].__len__()
 
@@ -206,9 +226,11 @@ turning_points11 = turning_points(hlp["ra11from9"],  n)
 turning_points13 = turning_points(hlp["ra13from11"],  n)
 turning_points15 = turning_points(hlp["ra15from13"],  n)
 
+print("turning points:")
+print("{}\n{}\n{}\n{}\n{}\n{}\n{}".format(turning_points3_1, turning_points9_1,turning_points15_1,turning_points13_1,turning_points11_1,turning_points5_1,turning_points7_1))
 
-print("{}\t{}\t{}\t{}\t{}\t{}\t{}".format(turning_points3_1, turning_points9_1,turning_points15_1,turning_points13_1,turning_points11_1,turning_points5_1,turning_points7_1))
-print("{}\t{}\t{}\t{}\t{}\t{}\t{}".format(turning_points3, turning_points9,turning_points15,turning_points13,turning_points11,turning_points5,turning_points7))
+print("turning points: (послідовне)")
+print("{}\n{}\n{}\n{}\n{}\n{}\n{}".format(turning_points3, turning_points9,turning_points15,turning_points13,turning_points11,turning_points5,turning_points7))
 
 
 hlp["median_filter3"] = medfilt(hlp["mean"])
@@ -246,7 +268,21 @@ corr6_1m = hlp["mean"].corr(hlp["mf13f"])
 corr7_1m = hlp["mean"].corr(hlp["mf15f"])
 
 
-print("this is median corealtion{}".format(corr3_1m))
+print("this is median corealtion (послідовне){}\n{}\n{}\n{}\n{}".format(corr1_1m, corr2_1m, corr3_1m, corr5_1m, corr7_1m))
+
+print("this is median corealtion {}\n{}\n{}\n{}\n{}".format(corr1m, corr2m, corr3m, corr5m, corr7m))
+
+
+turning_points5m = turning_points(hlp["mf5f"],  n)
+turning_points7m= turning_points(hlp["mf7f"],  n)
+turning_points9m = turning_points(hlp["mf9f"],  n)
+turning_points11m = turning_points(hlp["mf11f"],  n)
+turning_points13m = turning_points(hlp["mf13f"],  n)
+turning_points15m= turning_points(hlp["mf15f"],  n)
+
+
+print("turning points median :")
+print("{}\n{}\n{}\n{}\n{}\n{}".format(turning_points9m,turning_points15m,turning_points13m,turning_points11m,turning_points5m,turning_points7m))
 
 
 alpha_l = [0.1, 0.15, 0.2, 0.25, 0.3]
@@ -260,6 +296,36 @@ for i in range(1, 5):
     hlp["exp{}".format(alpha_l[i])] = hlp["mean"].ewm(alpha=alpha_l[i-1]).mean()
 
 print("exp check{}".format(hlp["exponentialra0.15"][87]))
+corr01 = hlp["mean"].corr(hlp["exponentialra0.1"])
+
+corr15 = hlp["mean"].corr(hlp["exponentialra0.15"])
+
+corr02 = hlp["mean"].corr(hlp["exponentialra0.2"])
+
+corr025= hlp["mean"].corr(hlp["exponentialra0.25"])
+
+corr03 =hlp["mean"].corr(hlp["exponentialra0.3"])
+print("correaltion exp 1")
+
+print("{}\n{}\n{}\n{}\n{}".format(corr01, corr15, corr02, corr025, corr03))
+
+
+corr011 = hlp["mean"].corr(hlp["exp0.1"])
+
+corr155 = hlp["mean"].corr(hlp["exp0.15"])
+
+corr022 = hlp["mean"].corr(hlp["exp0.2"])
+
+corr0255= hlp["mean"].corr(hlp["exp0.25"])
+
+corr033 =hlp["mean"].corr(hlp["exp0.3"])
+
+print("correaltion exp 2")
+
+print("{}\n{}\n{}\n{}\n{}".format(corr011, corr155, corr022, corr0255, corr033))
+
+
+
 
 
 
@@ -286,11 +352,53 @@ turning_pointexp3aft = turning_points(hlp["exp0.3"],  n)
 
 print("exp {}\t{}\t{}\t{}\t{}".format(turning_pointexp1, turning_pointsexp15,turning_pointexp2_,turning_pointexp25,turning_pointexp3,))
 print("exp 2{}\t{}\t{}\t{}\t{}".format(turning_pointexp1aft, turning_pointexp15aft,turning_pointexp2aft,turning_pointexp25aft,turning_pointexp3aft))
+print("е дата{}".format(dates[0]))
 
 
 
 
+r = [T.mktime(i.timetuple()) + i.microsecond / 1E61320517575 for i in x]
 
+
+
+
+print("this is r {}".format(r))
+e = dict()
+
+rr = [sc_creator() for i in y]
+
+e["x"] = r
+e["y"] = sc_creator()
+
+dd = pd.DataFrame(e)
+
+
+
+kmeans = KMeans(n_clusters=4).fit(dd)
+centroids = kmeans.cluster_centers_
+print(centroids)
+print(dd)
+
+S = 100
+N = int(len(data)/S)
+frames = [ data.iloc[i*S:(i+1)*S].copy() for i in range(N+1) ]
+
+df_by_duration = [i.groupby('duration') for i in frames]
+
+
+for i in df_by_duration:
+    pprint(i.describe().head())
+
+print(hlp)
+
+
+
+''''
+plt.scatter(dd["x"], dd["y"], c=kmeans.labels_.astype(float), s=50, alpha=0.5)
+plt.scatter(centroids[:, 0], centroids[:, 1], c='red', s=50)
+plt.show()
+
+'''
 
 
 
@@ -335,8 +443,7 @@ plt.show()
 
 '''
 
-ax.plot(x, hlp["exponentialra0.1"])
-plt.show()
+
 
 confidence = 0.95
 
@@ -358,13 +465,20 @@ n_bins = 971
 
 
 print(hlp.corr(method="pearson"))
-print(hlp.autocorr())
+
+print(hlp["mean"].autocorr())
 
 
 
 
 
 
+#ax.hist(hlp["mean"], bins=50, density=True, cumulative=-1)
+
+#ax.plot(x, hlp["mf15f"])
+
+
+#plt.show()
 
 
 
@@ -417,7 +531,9 @@ plt.show()
 
 # Overlay a reversed cumulative histogram.
 #ax.hist(data['duration'], bins=bins, density=True, histtype='step', cumulative=-1,
-     #   label='Reversed emp.')
+     #   label='Reversed emp.') 362, in <module>
+    plt.scatter(dd[x], dd[y], c=kmeans.labels_.astype(float), s=50, alpha=0.5)
+  File "/usr/local/lib/python3.6/dist-packages/pandas/core/frame.py", line 3001, in _
 
 # tidy up the figure
 ax.grid(True)
