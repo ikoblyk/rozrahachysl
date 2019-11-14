@@ -51,37 +51,6 @@ data.dropna(inplace=True)
 data.drop_duplicates(inplace=True)
 
 
-
-#fst = data.loc[:54]
-#r =54
-#for i in range(17):
-#    fst = fst.assign(data.loc[r:])
-#print(fst)
-''''
-#data['average'] = data.rolling(5).mean()
-#data['rolling average 5'] = data.set_index('Індекс дня').rolling(5).mean()
-
-plt.plot(data['Індекс дня'], label = 'date')
-
-plt.plot(data['Сеанси'], label = 'value', color = 'blue')
-
-plt.plot(data['rolling average 5'], label = 'rolling average 5', color = 'red')
-
-plt.plot(data['rolling average 2'], label = 'rolling average 2 ', color = 'green')
-
-plt.legend(loc = 2)
-
-f, (ax1, ax2) = plt.subplots(1, 2,sharex=True)
-ax1.plot(data['Індекс дня'], data['average'])
-dates = [data[]]
-ax2.plot(data['Індекс дня'], data['Сеанси'], color = "red")
-ax1.set_title("ковзне середня")
-
-plt.plot(data['Індекс дня'], data['average'])
-plt.plot(data['Сеанси'], label = 'value', color = 'red')
-#plt.plot(data['Сеанси'], label = 'value', color = 'red')
-
-'''
 time = [str(d) for d in data['duration']]
 dates = [str(dt).split()[0] for dt in data['date']]
 print(time[23])
@@ -150,10 +119,7 @@ print("{}".format(hlp["mean"].var()))
 
 
 
-
 hlp["rolling_av5"] = hlp["mean"].rolling(5, min_periods=1).mean()
-
-
 
 
 hlp["rolling_av3"] = hlp["mean"].rolling(3, min_periods=1).mean()
@@ -174,7 +140,6 @@ hlp["rolling_av15"] = hlp["mean"].rolling(15, min_periods=1).mean()
 #fig, ax = plt.subplots(figsize=(8, 4))
 
 hlp["ra5from3"] = hlp["rolling_av3"].rolling(5, min_periods=1).mean()
-#ax.plot(hlp["ra5from3"])
 hlp["ra7from5"] = hlp["ra5from3"].rolling(window=7, min_periods=1).mean()
 hlp["ra9from7"] = hlp["ra7from5"].rolling(window=9, min_periods=1).mean()
 hlp["ra11from9"] = hlp["ra9from7"].rolling(window=11, min_periods=1).mean()
@@ -227,7 +192,7 @@ turning_points13 = turning_points(hlp["ra13from11"],  n)
 turning_points15 = turning_points(hlp["ra15from13"],  n)
 
 print("turning points:")
-print("{}\n{}\n{}\n{}\n{}\n{}\n{}".format(turning_points3_1, turning_points9_1,turning_points15_1,turning_points13_1,turning_points11_1,turning_points5_1,turning_points7_1))
+print("{}\n{}\n{}\n{}\n{}\n{}\n{}".format(turning_points3_1, turning_points5_1,turning_points7_1,turning_points9_1,turning_points11_1,turning_points13_1,turning_points15_1))
 
 print("turning points: (послідовне)")
 print("{}\n{}\n{}\n{}\n{}\n{}\n{}".format(turning_points3, turning_points9,turning_points15,turning_points13,turning_points11,turning_points5,turning_points7))
@@ -325,13 +290,6 @@ print("correaltion exp 2")
 print("{}\n{}\n{}\n{}\n{}".format(corr011, corr155, corr022, corr0255, corr033))
 
 
-
-
-
-
-
-
-
 turning_pointexp1 = turning_points(hlp["exponentialra0.1"],  n)
 
 turning_pointsexp15= turning_points(hlp["exponentialra0.15"],  n)
@@ -359,9 +317,6 @@ print("е дата{}".format(dates[0]))
 
 r = [T.mktime(i.timetuple()) + i.microsecond / 1E61320517575 for i in x]
 
-
-
-
 print("this is r {}".format(r))
 e = dict()
 
@@ -372,14 +327,13 @@ e["y"] = sc_creator()
 
 dd = pd.DataFrame(e)
 
-
-
+''''
 kmeans = KMeans(n_clusters=4).fit(dd)
 centroids = kmeans.cluster_centers_
 print(centroids)
 print(dd)
 
-S = 100
+S = 10
 N = int(len(data)/S)
 frames = [ data.iloc[i*S:(i+1)*S].copy() for i in range(N+1) ]
 
@@ -391,23 +345,23 @@ for i in df_by_duration:
 
 print(hlp)
 
+'''
 
 
-''''
+'''
 plt.scatter(dd["x"], dd["y"], c=kmeans.labels_.astype(float), s=50, alpha=0.5)
 plt.scatter(centroids[:, 0], centroids[:, 1], c='red', s=50)
 plt.show()
 
+
+
+plt.plot(x, y)
+plt.show()
+
+
+
+
 '''
-
-
-
-
-
-
-
-
-
 
 
 
@@ -489,11 +443,10 @@ print(hlp["mean"].autocorr())
 
 fig, ax = plt.subplots(figsize=(8, 4))
 
-# plot the cumulative histogram
 
 n, bins, patches = ax.hist(hlp["mean"], n_bins,  density=False, histtype='step', cumulative = 1,  label='Empirical')
 
-# Add a line showing the expected distribution.
+
 
 yy = ((1 / (np.sqrt(2 * np.pi) * sigma)) * np.exp(-0.5 * (1 / sigma * (bins - mu))**2))
 yy = yy.cumsum()
@@ -504,10 +457,10 @@ ax.plot(bins, yy, 'k--', linewidth=1.5, label='Theoretical')
 
 plt.show()
 
-# Overlay a reversed cumulative histogram.
+
 ax.hist(hlp["mean"], bins=bins, density=True, histtype='step', cumulative=1)
 
-# tidy up the figure
+
 ax.grid(True)
 ax.legend(loc='right')
 ax.set_title('Cumulative diagram')
@@ -523,19 +476,12 @@ plt.show()
 
 
 
-# plot the cumulative histogram
 
-
-
-
-
-# Overlay a reversed cumulative histogram.
 #ax.hist(data['duration'], bins=bins, density=True, histtype='step', cumulative=-1,
      #   label='Reversed emp.') 362, in <module>
     plt.scatter(dd[x], dd[y], c=kmeans.labels_.astype(float), s=50, alpha=0.5)
   File "/usr/local/lib/python3.6/dist-packages/pandas/core/frame.py", line 3001, in _
 
-# tidy up the figure
 ax.grid(True)
 ax.legend(loc='right')
 ax.set_title('Cumulative step histograms')
@@ -548,7 +494,6 @@ n_bins = 100
 
 
 fig, ax = plt.subplots(figsize=(8, 4))
-# plot the cumulative histogram
 n, bins, patches = ax.hist([l for l in data['duration']], n_bins, density=True, histtype='step',cumulative=True, label='Empirical')
 
 
