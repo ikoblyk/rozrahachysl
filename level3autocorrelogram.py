@@ -2,8 +2,6 @@ from rozraha import hlp,data,  x
 import matplotlib.pyplot as plt
 
 
-#hlp = hlp.sort_values(by = "mean")
-#print(hlp)
 
 autocorfunc = list()
 

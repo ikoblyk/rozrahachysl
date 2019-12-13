@@ -1,27 +1,27 @@
 import matplotlib.pyplot as plt
 import scipy as sc
-import math
 
 
-X = [1.5, 1.6, 1.7, 1.8, 1.9, 2.0, 2.1, 2.2]
-Y = [1.924, 1.710, 1.525, 1.370, 1.264, 1.190, 1.148, 1.127]
+X = [2.2, 2.3, 2.4, 2.5, 2.6, 2.7, 2.8, 2.9]
+Y = [5.785, 5.685, 5.605, 5.545, 5.505, 5.480, 5.495, 5.510]
+
 
 p2 = sc.polyfit(X, Y, 2)
-print(p2)
 p1 = sc.polyfit(X, Y, 1)
 ypred1 = sc.polyval(p1, X)
 ypred2 = sc.polyval(p2, X)
-print("real values {}".format(Y))
-print("linear polynom values{}".format(ypred1))
-print("Quadratic polynom values{}".format(ypred2))
 
 print("quadratic polynom: x1^(2)*{}+x2*{}+{}".format(p2[0], p2[1], p2[2]))
-print("linear polynom: x*{}+x*{}+{}".format(p2[0], p2[1], p2[2]))
+print("linear polynom: x*{}+{}".format(p1[0], p1[1]))
 
 
+
+print("values predicted by linear polynom{}".format(ypred1))
+print("values predicted by quadratic polynom{}".format(ypred2))
 
 
 plt.scatter(X, Y)
+plt.title("Рівень 3")
 plt.plot(X, ypred2)
 plt.plot(X, ypred1)
 plt.xlabel("X")

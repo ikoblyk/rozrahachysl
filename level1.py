@@ -1,10 +1,11 @@
 import matplotlib.pyplot as plt
-from rozraha import x, y, hlp
+from rozraha import x, y, hlp, data
 import time as T
 import math
 
-fstlevel = dict()
+print(data)
 
+fstlevel = dict()
 
 fstlevel["sum"] = T.strftime('%H:%M:%S', T.gmtime(hlp['mean'].sum()))
 

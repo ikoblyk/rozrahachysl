@@ -1,31 +1,44 @@
 from scipy.cluster.hierarchy import dendrogram, linkage
-from scipy.cluster import hierarchy
-import matplotlib.pyplot as plt
-import  numpy as np
-from rozraha import hlp, x, data
+from rozraha import hlp
 from matplotlib import pyplot as plt
 import pandas as pd
+import scipy.spatial.distance as ssd
+from sklearn import preprocessing
+from normtest import nw, obj_p
 from pprint import pprint
+
+pprint(obj_p)
+
+
 
 hlp_divided = pd.DataFrame()
 h = hlp["mean"].to_numpy()
 
+d = preprocessing.normalize(nw)
 
-#hlp_divided["one"] = h[:244]
-#hlp_divided["two"] = h[244:487]
-#hlp_divided["three"] = h[487:730]
-#hlp_divided["four"] = h[730:973]
+print("normalized{}".format(d))
 
-'''
-S = 10
-N = int(len(data)/S)
-frames = [ data.iloc[i*S:(i+1)*S].copy() for i in range(N+1) ]
-'''''
-#df_by_duration = [i.groupby('duration') for i in data]
+dd = ssd.pdist(d)
 
-d = hlp.groupby("mean")
+matr = ssd.squareform(dd)
 
-print(d["mean"].apply(pd.DataFrame.max))
-print(hlp)
+print("distance matrix{}".format(matr))
+
+Z = linkage(d, 'single')
+plt.figure(figsize=(25, 10))
+plt.title("Дендограма")
+dendrogram(
+    Z,
+    truncate_mode='lastp',
+    p =10,
+
+
+)
+plt.show()
+
+
+
+
+
 
 
